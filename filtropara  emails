@@ -1,0 +1,51 @@
+function test_cron_mail() {
+
+    $args = array(
+        
+		 
+		'status'    => 'wc-completed',
+        'meta_key'  => '_order_expiration_date',
+		'value' => '2024-01-14T17:44',
+		'meta_compare'  => '==',
+		
+		
+		'posts_per_page' => -1,
+		
+    );
+ 	
+	echo 'compling:  ';
+	
+	$query = new WC_Order_Query( $args );
+	$orders = $query->get_orders($query);
+	
+	//$orders = get_posts($args);
+	
+		var_dump($orders);
+		
+	 
+		
+
+    // Recorrer los pedidos vencidos
+   foreach ($orders as $order) {
+        $order_id = $order->get_id();
+		$billing_name = $order->get_billing_first_name();
+
+        // Obtener la dirección de correo electrónico del cliente
+      // $billing_email = $order->get_billing_email();
+        $billing_email = 'fakasmile@gmail.com';
+
+        // Enviar un correo electrónico de aviso al cliente
+        $subject = 'Se vencio el Hosting de ' . $billing_name  ;
+        $message = 'Su hosting ha vencido. Por favor, póngase en contacto con nosotros para obtener más información.';
+
+        // Asegúrate de que la dirección de correo electrónico sea válida antes de enviar el correo
+      //  if (is_email($billing_email)) {
+            wp_mail($billing_email, $subject, $message);
+      //  }
+
+        // Puedes agregar más acciones aquí según tus necesidades, como cambiar el estado del pedido
+   }
+}
+
+// Agregar tarea cron para la función de prueba
+add_action('init', 'schedule_test_cron_job');
